@@ -20,6 +20,8 @@ type Todo struct {
 	Status string `json:"status"`
 }
 
+// --- Part 1 start
+
 func List(todos ...Todo) {
 	for _, item := range todos {
 		fmt.Println(item)
@@ -67,3 +69,5 @@ func ReadFromFile(fileName string) ([]Todo, error) {
 
 	return todos, nil
 }
+
+// --- Part 1 end
