@@ -50,3 +50,20 @@ func WriteToFile(fileName string, todos ...Todo) error {
 
 	return nil
 }
+
+func ReadFromFile(fileName string) ([]Todo, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	var todos []Todo
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&todos); err != nil {
+		return nil, err
+	}
+
+	return todos, nil
+}
