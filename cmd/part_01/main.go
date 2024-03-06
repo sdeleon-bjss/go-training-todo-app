@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var sharedNumber int
+
 func main() {
 	todos := []todo.Todo{
 		{ID: 1, Task: "Groceries", Status: todo.StatusComplete},
@@ -31,29 +33,28 @@ func main() {
 	println("Todos read from file:")
 	todo.List(todosFromFile...)
 
+	// p1 - 14
 	println("--- simulating concurrency --- ")
-	helloCompleted := make(chan bool)
+	oddNumbers := []int{1, 3, 5, 7, 9, 11}
+	evenNumbers := []int{2, 4, 6, 8, 10}
 
-	go sayHello("hey there", helloCompleted)
-	go sayHelloDelay("this is a delayed hello ~", 3, helloCompleted)
-	go sayHello("hello there", helloCompleted)
-	go sayHelloDelay("this is a another delayed hello ~", 2, helloCompleted)
-	go sayHello("hey again", helloCompleted)
-	go sayHello("hi!", helloCompleted)
+	numbersUpdatedChan := make(chan int)
 
-	for hello := range helloCompleted {
-		fmt.Println(hello)
+	go updateCount(oddNumbers, numbersUpdatedChan)
+	go updateCount(evenNumbers, numbersUpdatedChan)
+
+	for updatedNum := range numbersUpdatedChan {
+		fmt.Println(updatedNum)
 	}
+
 }
 
-func sayHello(msg string, completed chan bool) {
-	fmt.Println(msg)
-	completed <- true
-}
-
-func sayHelloDelay(msg string, delay time.Duration, completed chan bool) {
-	time.Sleep(delay * time.Second)
-	fmt.Println(msg)
-	completed <- true
-	close(completed)
+func updateCount(numbers []int, numbersUpdatedChan chan int) {
+	for _, num := range numbers {
+		sharedNumber = num
+		fmt.Printf("updating count with %d", num)
+		time.Sleep(200 * time.Millisecond)
+		numbersUpdatedChan <- sharedNumber
+		//close(numbersUpdatedChan)
+	}
 }
