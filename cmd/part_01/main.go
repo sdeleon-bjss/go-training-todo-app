@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-var sharedNumber int
-
 func main() {
 	todos := []todo.Todo{
 		{ID: 1, Task: "Groceries", Status: todo.StatusComplete},
@@ -35,26 +33,41 @@ func main() {
 
 	// p1 - 14
 	println("--- simulating concurrency --- ")
-	oddNumbers := []int{1, 3, 5, 7, 9, 11}
-	evenNumbers := []int{2, 4, 6, 8, 10}
 
-	numbersUpdatedChan := make(chan int)
+	sharedData := 0
 
-	go updateCount(oddNumbers, numbersUpdatedChan)
-	go updateCount(evenNumbers, numbersUpdatedChan)
+	done := make(chan bool)
+	num := make(chan int, 20)
 
-	for updatedNum := range numbersUpdatedChan {
-		fmt.Println(updatedNum)
-	}
+	go func() {
+		for i := range 10 {
+			if i%2 == 0 {
+				sharedData = i
+				fmt.Printf("Go routine 1: %d\n", sharedData)
+			}
 
-}
+			time.Sleep(100 * time.Millisecond)
+		}
 
-func updateCount(numbers []int, numbersUpdatedChan chan int) {
-	for _, num := range numbers {
-		sharedNumber = num
-		fmt.Printf("updating count with %d", num)
-		time.Sleep(200 * time.Millisecond)
-		numbersUpdatedChan <- sharedNumber
-		//close(numbersUpdatedChan)
-	}
+		done <- true
+		num <- sharedData
+	}()
+
+	go func() {
+		for i := range 10 {
+			if i%2 != 0 {
+				sharedData = i
+				fmt.Printf("Go routine 2: %d\n", sharedData)
+			}
+
+			time.Sleep(80 * time.Millisecond)
+		}
+
+		done <- true
+		num <- sharedData
+	}()
+
+	<-done
+	<-done
+	close(num)
 }
