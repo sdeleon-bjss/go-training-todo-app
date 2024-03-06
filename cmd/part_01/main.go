@@ -127,7 +127,7 @@ func main() {
 	//
 	//	for _, t := range todos {
 	//		mu.Lock()
-	//		fmt.Printf("TODO Item:(%d) %s\n", t.ID, t.Task)
+	//		fmt.Printf("To Do Item:(%d) %s\n", t.ID, t.Task)
 	//		mu.Unlock()
 	//		time.Sleep(100 * time.Millisecond)
 	//	}
@@ -138,7 +138,7 @@ func main() {
 	//
 	//	for _, t := range todos {
 	//		mu.Lock()
-	//		fmt.Printf("TODO Status:(%d) %s\n", t.ID, t.Status)
+	//		fmt.Printf("To DO Status:(%d) %s\n", t.ID, t.Status)
 	//		mu.Unlock()
 	//		time.Sleep(100 * time.Millisecond)
 	//	}
