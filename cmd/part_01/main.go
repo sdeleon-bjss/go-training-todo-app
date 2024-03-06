@@ -9,7 +9,13 @@ func main() {
 		{ID: 1, Task: "Groceries", Status: todo.StatusComplete},
 		{ID: 2, Task: "Laundry", Status: todo.StatusInProgress},
 		{ID: 3, Task: "Dishes", Status: todo.StatusIncomplete},
-		{ID: 4, Task: "Meeting", Status: todo.StatusCancelled},
+		{ID: 4, Task: "Meeting 1", Status: todo.StatusCancelled},
+		{ID: 5, Task: "Meeting 2", Status: todo.StatusCancelled},
+		{ID: 6, Task: "Meeting 3", Status: todo.StatusCancelled},
+		{ID: 7, Task: "Exercise", Status: todo.StatusIncomplete},
+		{ID: 8, Task: "Shower", Status: todo.StatusIncomplete},
+		{ID: 9, Task: "Feed cats", Status: todo.StatusComplete},
+		{ID: 10, Task: "Cook dinner", Status: todo.StatusInProgress},
 	}
 
 	// p1 - 10
@@ -29,9 +35,9 @@ func main() {
 	println("Todos read from file:")
 	todo.List(todosFromFile...)
 
-	// p1 - 14
 	println("--- simulating concurrency --- ")
 
+	// p1 - 14
 	//sharedData := 0
 	//
 	//done := make(chan bool)
@@ -109,4 +115,34 @@ func main() {
 	//
 	//wg.Wait()
 	//fmt.Println("Final value:", sharedData)
+
+	// p1 - 16
+	//var mu sync.Mutex
+	//var wg sync.WaitGroup
+	//
+	//wg.Add(2)
+	//
+	//go func() {
+	//	defer wg.Done()
+	//
+	//	for _, t := range todos {
+	//		mu.Lock()
+	//		fmt.Printf("TODO Item:(%d) %s\n", t.ID, t.Task)
+	//		mu.Unlock()
+	//		time.Sleep(100 * time.Millisecond)
+	//	}
+	//}()
+	//
+	//go func() {
+	//	defer wg.Done()
+	//
+	//	for _, t := range todos {
+	//		mu.Lock()
+	//		fmt.Printf("TODO Status:(%d) %s\n", t.ID, t.Status)
+	//		mu.Unlock()
+	//		time.Sleep(100 * time.Millisecond)
+	//	}
+	//}()
+	//
+	//wg.Wait()
 }
