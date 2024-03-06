@@ -2,9 +2,6 @@ package main
 
 import (
 	"bjss-todo-app/pkg/models/todo"
-	"fmt"
-	"sync"
-	"time"
 )
 
 func main() {
@@ -72,43 +69,44 @@ func main() {
 	//<-done
 	//close(num)
 
-	sharedData := 0
-
-	var mu sync.Mutex
-	var wg sync.WaitGroup
-
-	wg.Add(2)
-
-	go func() {
-		defer wg.Done()
-
-		for i := range 10 {
-			if i%2 == 0 {
-				mu.Lock()
-				sharedData = i
-				mu.Unlock()
-				fmt.Println("Go routine 1: ", sharedData)
-			}
-
-			time.Sleep(1 * time.Millisecond)
-		}
-	}()
-
-	go func() {
-		defer wg.Done()
-
-		for i := range 10 {
-			if i%2 != 0 {
-				mu.Lock()
-				sharedData = i
-				mu.Unlock()
-				fmt.Println("Go routine 2: ", sharedData)
-			}
-
-			time.Sleep(1 * time.Millisecond)
-		}
-	}()
-
-	wg.Wait()
-	fmt.Println("Final value:", sharedData)
+	// p1 - 15
+	//sharedData := 0
+	//
+	//var mu sync.Mutex
+	//var wg sync.WaitGroup
+	//
+	//wg.Add(2)
+	//
+	//go func() {
+	//	defer wg.Done()
+	//
+	//	for i := range 10 {
+	//		if i%2 == 0 {
+	//			mu.Lock()
+	//			sharedData = i
+	//			mu.Unlock()
+	//			fmt.Println("Go routine 1: ", sharedData)
+	//		}
+	//
+	//		time.Sleep(1 * time.Millisecond)
+	//	}
+	//}()
+	//
+	//go func() {
+	//	defer wg.Done()
+	//
+	//	for i := range 10 {
+	//		if i%2 != 0 {
+	//			mu.Lock()
+	//			sharedData = i
+	//			mu.Unlock()
+	//			fmt.Println("Go routine 2: ", sharedData)
+	//		}
+	//
+	//		time.Sleep(1 * time.Millisecond)
+	//	}
+	//}()
+	//
+	//wg.Wait()
+	//fmt.Println("Final value:", sharedData)
 }
