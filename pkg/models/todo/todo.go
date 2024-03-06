@@ -1,20 +1,32 @@
 package todo
 
 import (
-	"bjss-todo-app/pkg/models"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 )
 
-func List(todos ...models.Todo) {
+const (
+	StatusInProgress = "In Progress"
+	StatusIncomplete = "Incomplete"
+	StatusCancelled  = "Cancelled"
+	StatusComplete   = "Complete"
+)
+
+type Todo struct {
+	ID     int    `json:"id"`
+	Task   string `json:"task"`
+	Status string `json:"status"`
+}
+
+func List(todos ...Todo) {
 	for _, item := range todos {
 		fmt.Println(item)
 	}
 }
 
-func ListAsJSON(todos ...models.Todo) {
+func ListAsJSON(todos ...Todo) {
 	todosJSON, err := json.Marshal(todos)
 	if err != nil {
 		log.Fatalf("Cannot marshal todos: %v", err)
@@ -23,7 +35,7 @@ func ListAsJSON(todos ...models.Todo) {
 	fmt.Println(string(todosJSON))
 }
 
-func WriteToFile(fileName string, todos ...models.Todo) error {
+func WriteToFile(fileName string, todos ...Todo) error {
 	file, err := os.Create(fileName)
 	if err != nil {
 		return err
