@@ -15,4 +15,8 @@ func main() {
 
 	todo.List(todos...)
 	todo.ListAsJSON(todos...)
+	err := todo.WriteToFile("part_1_todos.json", todos...)
+	if err != nil {
+		return
+	}
 }
