@@ -8,7 +8,7 @@ const (
 )
 
 type Todo struct {
-	ID     int
-	Task   string
-	Status string
+	ID     int    `json:"id"`
+	Task   string `json:"task"`
+	Status string `json:"status"`
 }

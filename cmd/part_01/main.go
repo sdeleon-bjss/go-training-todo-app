@@ -14,4 +14,5 @@ func main() {
 	}
 
 	todo.List(todos...)
+	todo.ListAsJSON(todos...)
 }
