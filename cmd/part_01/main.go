@@ -2,6 +2,8 @@ package main
 
 import (
 	"bjss-todo-app/pkg/models/todo"
+	"fmt"
+	"time"
 )
 
 func main() {
@@ -28,4 +30,30 @@ func main() {
 	}
 	println("Todos read from file:")
 	todo.List(todosFromFile...)
+
+	println("--- simulating concurrency --- ")
+	helloCompleted := make(chan bool)
+
+	go sayHello("hey there", helloCompleted)
+	go sayHelloDelay("this is a delayed hello ~", 3, helloCompleted)
+	go sayHello("hello there", helloCompleted)
+	go sayHelloDelay("this is a another delayed hello ~", 2, helloCompleted)
+	go sayHello("hey again", helloCompleted)
+	go sayHello("hi!", helloCompleted)
+
+	for hello := range helloCompleted {
+		fmt.Println(hello)
+	}
+}
+
+func sayHello(msg string, completed chan bool) {
+	fmt.Println(msg)
+	completed <- true
+}
+
+func sayHelloDelay(msg string, delay time.Duration, completed chan bool) {
+	time.Sleep(delay * time.Second)
+	fmt.Println(msg)
+	completed <- true
+	close(completed)
 }
