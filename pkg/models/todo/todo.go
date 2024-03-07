@@ -81,7 +81,7 @@ type Todos struct {
 
 func (t Todos) Create(task string) Todo {
 	todo := Todo{
-		ID:     rand.Intn(1000000),
+		ID:     rand.Intn(10000),
 		Task:   task,
 		Status: StatusInProgress,
 	}
@@ -123,6 +123,12 @@ func (t *Todos) Delete(id int) error {
 	delete(t.Todos, id)
 
 	return nil
+}
+
+func (t *Todos) List() {
+	for _, item := range t.Todos {
+		fmt.Printf("ID: %d, Task: %s, Status: %s\n", item.ID, item.Task, item.Status)
+	}
 }
 
 // --- Part 2 end
