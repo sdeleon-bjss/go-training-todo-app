@@ -131,4 +131,30 @@ func (t *Todos) List() {
 	}
 }
 
+func (t *Todos) GetAll() []Todo {
+	var todos []Todo
+	for _, item := range t.Todos {
+		todos = append(todos, item)
+	}
+
+	return todos
+}
+
+func InitializeTodos() Todos {
+	todos := Todos{
+		Todos: make(map[int]Todo),
+	}
+
+	dummyTodos, err := ReadFromFile("dummy_todos.json")
+	if err != nil {
+		return todos
+	}
+
+	for _, item := range dummyTodos {
+		todos.Todos[item.ID] = item
+	}
+
+	return todos
+}
+
 // --- Part 2 end

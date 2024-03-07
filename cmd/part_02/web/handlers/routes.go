@@ -1,17 +1,25 @@
 package handlers
 
 import (
+	"bjss-todo-app/pkg/todo"
 	"html/template"
 	"net/http"
 )
 
+var todos = todo.InitializeTodos()
+
 func SetupRoutes() {
+	// api
+	http.HandleFunc("/api/todos", TodosHandler)
+
+	// page
 	http.HandleFunc("/", home)
 }
 
 type pageData struct {
 	Title   string
 	Message string
+	Todos   todo.Todos
 }
 
 func home(w http.ResponseWriter, r *http.Request) {

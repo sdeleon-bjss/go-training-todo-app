@@ -1,32 +1,15 @@
 package main
 
 import (
-	"bjss-todo-app/pkg/models/todo"
+	"bjss-todo-app/pkg/todo"
 	"flag"
 	"fmt"
 )
 
-func initializeTodos() todo.Todos {
-	todos := todo.Todos{
-		Todos: make(map[int]todo.Todo),
-	}
-
-	dummyTodos, err := todo.ReadFromFile("dummy_todos.json")
-	if err != nil {
-		return todos
-	}
-
-	for _, item := range dummyTodos {
-		todos.Todos[item.ID] = item
-	}
-
-	return todos
-}
-
 // TODO - figure out how to keep program open after running a command and not exiting
 
 func main() {
-	todos := initializeTodos()
+	todos := todo.InitializeTodos()
 
 	// flags
 	operation := flag.String("operation", "", "Choose an operation: list, create, read, update or delete")

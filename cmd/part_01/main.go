@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bjss-todo-app/pkg/models/todo"
+	"bjss-todo-app/pkg/todo"
 )
 
 func main() {

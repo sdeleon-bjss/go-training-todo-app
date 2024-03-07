@@ -1,7 +1,7 @@
 package todo_test
 
 import (
-	"bjss-todo-app/pkg/models/todo"
+	"bjss-todo-app/pkg/todo"
 	"testing"
 )
 
