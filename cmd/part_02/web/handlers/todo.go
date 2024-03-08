@@ -9,6 +9,9 @@ import (
 )
 
 func todosHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+
 	switch r.Method {
 	case "GET":
 		// with id query param
@@ -41,12 +44,12 @@ func getTodoByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	todo, err := todos.Read(id)
+	todoRead, err := todos.Read(id)
 	if err != nil {
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(todo)
+	err = json.NewEncoder(w).Encode(todoRead)
 	if err != nil {
 		return
 	}
