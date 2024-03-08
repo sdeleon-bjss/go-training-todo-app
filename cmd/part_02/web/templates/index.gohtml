@@ -5,6 +5,8 @@
     <title>{{ .Title }}</title>
 </head>
 <body>
+
+
     <h1>{{ .Message }}</h1>
     <h2>Todos loaded</h2>
 
@@ -37,47 +39,11 @@
         <button type="submit">Update</button>
     </form>
 
-    <h2>Get All todos</h2>
-    <pre class="get-todos"></pre>
-    <form action="/api/todos" method="get" id="get-todos">
-        <button type="submit">Get All</button>
-    </form>
-
-    <h2>Get todo by id</h2>
-    <pre class="get-todo"></pre>
-    <form action="/api/todos" method="get" id="get-todo">
-        <input type="text" name="id" placeholder="enter the id" />
-        <button type="submit">Get By Id</button>
-    </form>
-
+    {{ template "getTodos" . }}
 
 <script>
     const todos = {{ .Todos }};
     console.log(todos);
-
-    // get all
-    document.getElementById('get-todos').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const response = await fetch('/api/todos');
-        const data = await response.json();
-
-        document.querySelector('.get-todos').textContent = JSON.stringify(data, null, 2);
-    });
-
-    // get 1 by id
-    document.getElementById('get-todo').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = parseInt(e.target.querySelector('input[name="id"]').value);
-
-        if (!id) {
-            return alert("please enter an id");
-        }
-
-        const response = await fetch(`/api/todos?id=${id}`);
-        const data = await response.json();
-
-        document.querySelector('.get-todo').textContent = JSON.stringify(data, null, 2);
-    });
 
     // create
     document.getElementById('create-todo').addEventListener('submit', async(e) => {

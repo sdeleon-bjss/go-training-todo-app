@@ -1,0 +1,59 @@
+{{ define "getTodos" }}
+    <h2>Get todo by id</h2>
+    <pre class="get-todo"></pre>
+    <form action="/api/todos" method="get" id="get-todo">
+        <input type="text" name="id" placeholder="enter the id" />
+        <button type="submit">Get By Id</button>
+        <button type="button" id="clear-todo">Clear todo</button>
+    </form>
+
+    <h2>Get All todos</h2>
+    <pre class="get-todos"></pre>
+    <form action="/api/todos" method="get" id="get-todos">
+        <button type="submit">Get All</button>
+        <button type="button" id="clear-todos">Clear todos</button>
+    </form>
+
+    <script>
+        function showClearBtn(id) {
+            document.getElementById(id).style.display = "block";
+        }
+        document.getElementById("get-todos").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const response = await fetch("/api/todos");
+            const data = await response.json();
+
+            document.querySelector(".get-todos").textContent = JSON.stringify(data, null, 2);
+            if (data.length > 0) {
+                showClearBtn("clear-todos");
+            }
+        });
+
+        // get 1 by id
+        document.getElementById("get-todo").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = parseInt(e.target.querySelector('input[name="id"]').value);
+
+            if (!id) {
+                return alert("please enter an id");
+            }
+
+            const response = await fetch(`/api/todos?id=${id}`);
+            const data = await response.json();
+
+            document.querySelector(".get-todo").textContent = JSON.stringify(data, null, 2);
+            if (data.length > 0){
+                showClearBtn("clear-todo");
+            }
+        });
+
+        // clear
+        document.getElementById("clear-todo").addEventListener("click", () => {
+            document.querySelector(".get-todo").textContent = "";
+        });
+
+        document.getElementById("clear-todos").addEventListener("click", () => {
+            document.querySelector(".get-todos").textContent = "";
+        });
+    </script>
+{{ end }}

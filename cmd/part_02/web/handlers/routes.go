@@ -23,7 +23,7 @@ type pageData struct {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("cmd/part_02/web/templates/index.gohtml")
+	tmpl, err := template.ParseFiles("cmd/part_02/web/templates/index.gohtml", "cmd/part_02/web/templates/partials/getTodos.gohtml")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -31,7 +31,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	data := pageData{
 		Title:   "BJSS Go Academy | Todo App",
-		Message: "Hello world test msg",
+		Message: "Hello world from the server",
 		Todos:   todos.GetAll(),
 	}
 
