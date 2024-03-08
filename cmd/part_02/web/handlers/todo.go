@@ -22,8 +22,10 @@ func todosHandler(w http.ResponseWriter, r *http.Request) {
 		createTodo(w, r)
 
 	case "PUT":
+		updateTodo(w, r)
 
 	case "DELETE":
+		deleteTodo(w, r)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -60,6 +62,7 @@ func getTodos(w http.ResponseWriter, r *http.Request) {
 
 func createTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo todo.Todo
+
 	err := json.NewDecoder(r.Body).Decode(&newTodo)
 	if err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -80,9 +83,41 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTodo(w http.ResponseWriter, r *http.Request) {
+	var todoToUpdate todo.Todo
 
+	err := json.NewDecoder(r.Body).Decode(&todoToUpdate)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	updatedTodo, err := todos.Update(todoToUpdate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(updatedTodo)
+	if err != nil {
+		return
+	}
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
+	var todoToDelete todo.Todo
 
+	err := json.NewDecoder(r.Body).Decode(&todoToDelete)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	err = todos.Delete(todoToDelete.ID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+	return
 }

@@ -100,18 +100,15 @@ func (t *Todos) Read(id int) (Todo, error) {
 	return todo, nil
 }
 
-func (t *Todos) Update(id int, task string, status string) (Todo, error) {
-	todo, ok := t.Todos[id]
+func (t *Todos) Update(todoToUpdate Todo) (Todo, error) {
+	_, ok := t.Todos[todoToUpdate.ID]
 	if !ok {
-		return Todo{}, fmt.Errorf("todo with ID %d not found", id)
+		return Todo{}, fmt.Errorf("todo with ID %d not found", todoToUpdate.ID)
 	}
 
-	todo.Task = task
-	todo.Status = status
+	t.Todos[todoToUpdate.ID] = todoToUpdate
 
-	t.Todos[id] = todo
-
-	return todo, nil
+	return todoToUpdate, nil
 }
 
 func (t *Todos) Delete(id int) error {
@@ -121,6 +118,16 @@ func (t *Todos) Delete(id int) error {
 	}
 
 	delete(t.Todos, id)
+
+	existingTodos := make([]Todo, 0, len(t.Todos))
+	for _, todo := range t.Todos {
+		existingTodos = append(existingTodos, todo)
+	}
+
+	err := WriteToFile("dummy_todos.json", existingTodos...)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -141,16 +148,15 @@ func (t *Todos) GetAll() []Todo {
 }
 
 func (t *Todo) SaveToExistingFile(fileName string) error {
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
+	existingTodos, err := ReadFromFile(fileName)
 	if err != nil {
 		return err
-
 	}
 
-	defer file.Close()
+	existingTodos = append(existingTodos, *t)
 
-	encoder := json.NewEncoder(file)
-	if err := encoder.Encode(t); err != nil {
+	err = WriteToFile(fileName, existingTodos...)
+	if err != nil {
 		log.Fatalf("Cannot encode todos: %v", err)
 	}
 
@@ -158,20 +164,36 @@ func (t *Todo) SaveToExistingFile(fileName string) error {
 }
 
 func InitializeTodos() Todos {
-	todos := Todos{
-		Todos: make(map[int]Todo),
-	}
+	todos := make(map[int]Todo)
 
-	dummyTodos, err := ReadFromFile("dummy_todos.json")
+	todosFromFile, err := ReadFromFile("dummy_todos.json")
 	if err != nil {
-		return todos
+		log.Printf("Cannot read from file: %v", err)
 	}
 
-	for _, item := range dummyTodos {
-		todos.Todos[item.ID] = item
+	if len(todosFromFile) > 0 {
+		for _, todo := range todosFromFile {
+			todos[todo.ID] = todo
+		}
+		return Todos{Todos: todos}
 	}
 
-	return todos
+	seedData := []Todo{
+		{ID: 1, Task: "Buy groceries", Status: StatusInProgress},
+		{ID: 2, Task: "Do laundry", Status: StatusInProgress},
+		{ID: 3, Task: "Clean the house", Status: StatusInProgress},
+	}
+
+	for _, todo := range seedData {
+		todos[todo.ID] = todo
+	}
+
+	err = WriteToFile("dummy_todos.json", seedData...)
+	if err != nil {
+		log.Fatalf("Cannot write to file: %v", err)
+	}
+
+	return Todos{Todos: todos}
 }
 
 // --- Part 2 end

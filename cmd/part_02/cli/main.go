@@ -60,7 +60,11 @@ func main() {
 			println("the `id` flag is required for updating")
 		}
 
-		updatedTodo, err := todos.Update(*taskId, *updateTask, *updateStatus)
+		updatedTodo, err := todos.Update(todo.Todo{
+			ID:     *taskId,
+			Task:   *updateTask,
+			Status: *updateStatus,
+		})
 		if err != nil {
 			return
 		}

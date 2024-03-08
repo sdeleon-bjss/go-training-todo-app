@@ -1,0 +1,39 @@
+# Variables
+@host = http://localhost:8000/
+@id = 4207
+@newTask = "My new todo task test"
+@updatedTask = "My updated todo task test"
+
+### GET Todos
+GET {{host}}api/todos
+Accept: application/json
+
+### Get Todo by id
+GET {{host}}api/todos?id={{id}}
+Accept: application/json
+
+### Create Todo
+POST {{host}}api/todos
+Content-Type: application/json
+
+{
+  "task": {{newTask}}
+}
+
+### Update Todo
+PUT {{host}}api/todos
+Content-Type: application/json
+
+{
+  "ID": {{id}},
+  "Task": {{updatedTask}},
+  "Status": "Complete"
+}
+
+### Delete Todo
+DELETE {{host}}api/todos
+Content-Type: application/json
+
+{
+  "ID": {{id}}
+}

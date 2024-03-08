@@ -56,7 +56,11 @@ func TestUpdate(t *testing.T) {
 
 	todoCreated := todos.Create("Groceries")
 
-	todoUpdated, err := todos.Update(todoCreated.ID, "Groceries", todo.StatusComplete)
+	todoUpdated, err := todos.Update(todo.Todo{
+		ID:     todoCreated.ID,
+		Task:   "Updated Groceries",
+		Status: todo.StatusComplete,
+	})
 	if err != nil {
 		t.Errorf("Error updating todo: %v", err)
 	}
