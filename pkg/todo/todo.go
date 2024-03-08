@@ -21,8 +21,6 @@ type Todo struct {
 	Status string `json:"status"`
 }
 
-// --- Part 1 start
-
 func List(todos ...Todo) {
 	for _, item := range todos {
 		fmt.Println(item)
@@ -71,10 +69,6 @@ func ReadFromFile(fileName string) ([]Todo, error) {
 	return todos, nil
 }
 
-// --- Part 1 end
-
-// --- Part 2 start
-
 type Todos struct {
 	Todos map[int]Todo
 }
@@ -101,6 +95,7 @@ func (t *Todos) Read(id int) (Todo, error) {
 }
 
 func (t *Todos) Update(todoToUpdate Todo) (Todo, error) {
+	fmt.Println("todo received to update: ", todoToUpdate)
 	_, ok := t.Todos[todoToUpdate.ID]
 	if !ok {
 		return Todo{}, fmt.Errorf("todo with ID %d not found", todoToUpdate.ID)
@@ -195,5 +190,3 @@ func InitializeTodos() Todos {
 
 	return Todos{Todos: todos}
 }
-
-// --- Part 2 end

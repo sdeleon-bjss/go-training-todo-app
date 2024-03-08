@@ -3,6 +3,7 @@ package handlers
 import (
 	"bjss-todo-app/pkg/todo"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -87,9 +88,12 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&todoToUpdate)
 	if err != nil {
+		fmt.Println("error decoding: ", err)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println("todo parsed: ", todoToUpdate)
 
 	updatedTodo, err := todos.Update(todoToUpdate)
 	if err != nil {
@@ -104,15 +108,14 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
-	var todoToDelete todo.Todo
-
-	err := json.NewDecoder(r.Body).Decode(&todoToDelete)
+	queryID := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(queryID)
 	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
 
-	err = todos.Delete(todoToDelete.ID)
+	err = todos.Delete(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

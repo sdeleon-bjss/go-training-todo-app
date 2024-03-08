@@ -19,7 +19,7 @@ func SetupRoutes() {
 type pageData struct {
 	Title   string
 	Message string
-	Todos   todo.Todos
+	Todos   []todo.Todo
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +32,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	data := pageData{
 		Title:   "BJSS Go Academy | Todo App",
 		Message: "Hello world test msg",
+		Todos:   todos.GetAll(),
 	}
 
 	err = tmpl.Execute(w, data)

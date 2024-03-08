@@ -6,5 +6,158 @@
 </head>
 <body>
     <h1>{{ .Message }}</h1>
+    <h2>Todos loaded</h2>
+
+    <ul>
+        {{ range .Todos }}
+            <li>{{.}}</li>
+        {{ end }}
+    </ul>
+
+    <h2>Create</h2>
+    <pre id="created-todo"></pre>
+    <form action="/api/todos" method="post" id="create-todo">
+        <input type="text" name="task" placeholder="enter a new task todo" />
+        <button type="submit">Create</button>
+    </form>
+
+    <h2>Delete</h2>
+    <p id="deleted-todo"></p>
+    <form action="/api/todos" method="post" id="delete-todo">
+        <input type="text" name="id" placeholder="enter the id" />
+        <button type="submit">Delete</button>
+    </form>
+
+    <h2>Update</h2>
+    <pre id="updated-todo"></pre>
+    <form action="/api/todos" method="post" id="update-todo">
+        <input type="text" name="id" placeholder="enter the id" />
+        <input type="text" name="task" placeholder="enter a task to update" />
+        <input type="text" name="status" placeholder="enter a status to update" />
+        <button type="submit">Update</button>
+    </form>
+
+    <h2>Get All todos</h2>
+    <pre class="get-todos"></pre>
+    <form action="/api/todos" method="get" id="get-todos">
+        <button type="submit">Get All</button>
+    </form>
+
+    <h2>Get todo by id</h2>
+    <pre class="get-todo"></pre>
+    <form action="/api/todos" method="get" id="get-todo">
+        <input type="text" name="id" placeholder="enter the id" />
+        <button type="submit">Get By Id</button>
+    </form>
+
+
+<script>
+    const todos = {{ .Todos }};
+    console.log(todos);
+
+    // get all
+    document.getElementById('get-todos').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const response = await fetch('/api/todos');
+        const data = await response.json();
+
+        document.querySelector('.get-todos').textContent = JSON.stringify(data, null, 2);
+    });
+
+    // get 1 by id
+    document.getElementById('get-todo').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = parseInt(e.target.querySelector('input[name="id"]').value);
+
+        if (!id) {
+            return alert("please enter an id");
+        }
+
+        const response = await fetch(`/api/todos?id=${id}`);
+        const data = await response.json();
+
+        document.querySelector('.get-todo').textContent = JSON.stringify(data, null, 2);
+    });
+
+    // create
+    document.getElementById('create-todo').addEventListener('submit', async(e) => {
+        e.preventDefault();
+        const task = e.target.querySelector('input[name="task"]')
+        if (!task.value) {
+            return alert("please enter a task");
+        }
+
+        const response = await fetch('/api/todos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ task: task.value })
+        });
+
+        const data = await response.json();
+        console.log("todo created: ", data);
+
+        document.getElementById('created-todo').textContent = JSON.stringify(data, null, 2);
+    });
+
+    // delete
+    document.getElementById('delete-todo').addEventListener('submit', async(e) => {
+        e.preventDefault();
+        const id = parseInt(e.target.querySelector('input[name="id"]').value);
+        if (!id) {
+            return alert("please enter an id");
+        }
+
+        const response = await fetch(`/api/todos?id=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log("response: ", response);
+
+        document.getElementById('deleted-todo').textContent = "todo deleted with id: " + id;
+    });
+
+    // update
+    document.getElementById('update-todo').addEventListener('submit', async(e) => {
+        e.preventDefault();
+        const id = parseInt(e.target.querySelector('input[name="id"]').value);
+        const task = e.target.querySelector('input[name="task"]').value;
+        const status = e.target.querySelector('input[name="status"]').value;
+
+        if (!id) {
+            return alert("please enter an id");
+        }
+
+        if (!task) {
+            return alert("please enter a task");
+        }
+
+        if (!status) {
+            return alert("please enter a status");
+        }
+
+        const response = await fetch("/api/todos", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ID: id, Task: task, Status: status })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("todo updated: ", data);
+            document.getElementById('updated-todo').textContent = JSON.stringify(data, null, 2);
+            return;
+        }
+
+        console.log("HTTP response not OK, status ", response.status);
+    });
+
+</script>
 </body>
 </html>

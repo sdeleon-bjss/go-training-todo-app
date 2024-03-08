@@ -1,6 +1,6 @@
 # Variables
 @host = http://localhost:8000/
-@id = 4207
+@id = 1740
 @newTask = "My new todo task test"
 @updatedTask = "My updated todo task test"
 
@@ -31,9 +31,5 @@ Content-Type: application/json
 }
 
 ### Delete Todo
-DELETE {{host}}api/todos
+DELETE {{host}}api/todos?id={{id}}
 Content-Type: application/json
-
-{
-  "ID": {{id}}
-}
