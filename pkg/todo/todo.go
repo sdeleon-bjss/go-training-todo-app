@@ -140,6 +140,23 @@ func (t *Todos) GetAll() []Todo {
 	return todos
 }
 
+func (t *Todo) SaveToExistingFile(fileName string) error {
+	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
+	if err != nil {
+		return err
+
+	}
+
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(t); err != nil {
+		log.Fatalf("Cannot encode todos: %v", err)
+	}
+
+	return nil
+}
+
 func InitializeTodos() Todos {
 	todos := Todos{
 		Todos: make(map[int]Todo),

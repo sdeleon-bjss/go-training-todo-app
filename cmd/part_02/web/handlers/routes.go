@@ -10,7 +10,7 @@ var todos = todo.InitializeTodos()
 
 func SetupRoutes() {
 	// api
-	http.HandleFunc("/api/todos", TodosHandler)
+	http.HandleFunc("/api/todos", todosHandler)
 
 	// page
 	http.HandleFunc("/", home)
