@@ -5,11 +5,9 @@
     <title>{{ .Title }}</title>
 </head>
 <body>
-
-
     <h1>{{ .Message }}</h1>
-    <h2>Todos loaded</h2>
 
+    <h2>Todos loaded from server</h2>
     <ul>
         {{ range .Todos }}
             <li>{{.}}</li>
