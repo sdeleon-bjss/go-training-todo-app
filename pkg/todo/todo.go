@@ -1,11 +1,12 @@
 package todo
 
 import (
+	"bjss-todo-app/cmd/part_02/web/database"
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
+	"sync"
 )
 
 const (
@@ -71,56 +72,71 @@ func ReadFromFile(fileName string) ([]Todo, error) {
 
 type Todos struct {
 	Todos map[int]Todo
+	mu    sync.RWMutex
 }
 
-func (t Todos) Create(task string) Todo {
-	todo := Todo{
-		ID:     rand.Intn(10000),
-		Task:   task,
-		Status: StatusInProgress,
+func (t *Todos) Create(task string) (Todo, error) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	sql := "INSERT INTO todos (task, status, user_id) VALUES ($1, $2, $3) RETURNING id"
+
+	createdTodo := Todo{}
+	status := StatusInProgress
+
+	err := database.DB.QueryRow(sql, task, status, 1).Scan(&createdTodo.ID)
+	if err != nil {
+		log.Fatalf("Error creating todo: %v", err)
+		return Todo{}, err
 	}
 
-	t.Todos[todo.ID] = todo
+	createdTodo.Task = task
+	createdTodo.Status = status
 
-	return todo
+	return createdTodo, nil
 }
 
 func (t *Todos) Read(id int) (Todo, error) {
-	todo, ok := t.Todos[id]
-	if !ok {
-		return Todo{}, fmt.Errorf("todo with ID %d not found", id)
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+
+	sql := "SELECT id, task, status FROM todos WHERE id = $1"
+
+	todo := Todo{}
+	err := database.DB.QueryRow(sql, id).Scan(&todo.ID, &todo.Task, &todo.Status)
+	if err != nil {
+		log.Fatalf("Error reading todo: %v", err)
+		return Todo{}, err
 	}
 
 	return todo, nil
 }
 
 func (t *Todos) Update(todoToUpdate Todo) (Todo, error) {
-	fmt.Println("todo received to update: ", todoToUpdate)
-	_, ok := t.Todos[todoToUpdate.ID]
-	if !ok {
-		return Todo{}, fmt.Errorf("todo with ID %d not found", todoToUpdate.ID)
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	sql := "UPDATE todos SET task = $1, status = $2 WHERE id = $3 RETURNING id, task, status"
+
+	updatedTodo := Todo{}
+	err := database.DB.QueryRow(sql, todoToUpdate.Task, todoToUpdate.Status, todoToUpdate.ID).Scan(&updatedTodo.ID, &updatedTodo.Task, &updatedTodo.Status)
+	if err != nil {
+		log.Fatalf("Error updating todo: %v", err)
+		return Todo{}, err
 	}
 
-	t.Todos[todoToUpdate.ID] = todoToUpdate
-
-	return todoToUpdate, nil
+	return updatedTodo, nil
 }
 
 func (t *Todos) Delete(id int) error {
-	_, ok := t.Todos[id]
-	if !ok {
-		return fmt.Errorf("todo with ID %d not found", id)
-	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
 
-	delete(t.Todos, id)
+	sql := "DELETE FROM todos WHERE id = $1"
 
-	existingTodos := make([]Todo, 0, len(t.Todos))
-	for _, todo := range t.Todos {
-		existingTodos = append(existingTodos, todo)
-	}
-
-	err := WriteToFile("dummy_todos.json", existingTodos...)
+	_, err := database.DB.Exec(sql, id)
 	if err != nil {
+		log.Fatalf("Error deleting todo: %v", err)
 		return err
 	}
 
@@ -128,20 +144,55 @@ func (t *Todos) Delete(id int) error {
 }
 
 func (t *Todos) List() {
-	for _, item := range t.Todos {
-		fmt.Printf("ID: %d, Task: %s, Status: %s\n", item.ID, item.Task, item.Status)
+	sql := "SELECT id, task, status FROM todos"
+
+	rows, err := database.DB.Query(sql)
+	if err != nil {
+		log.Fatalf("Error getting todos: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var readTodo Todo
+
+		err := rows.Scan(&readTodo.ID, &readTodo.Task, &readTodo.Status)
+		if err != nil {
+			log.Fatalf("Error scanning todo: %v", err)
+		}
+
+		fmt.Printf("ID: %d, Task: %s, Status: %s\n", readTodo.ID, readTodo.Task, readTodo.Status)
 	}
 }
 
-func (t *Todos) GetAll() []Todo {
-	var todos []Todo
-	for _, item := range t.Todos {
-		todos = append(todos, item)
+func (t *Todos) GetAll() ([]Todo, error) {
+	var todosList []Todo
+
+	sql := "SELECT id, task, status FROM todos"
+
+	rows, err := database.DB.Query(sql)
+	if err != nil {
+		log.Fatalf("Error getting todosList: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var readTodo Todo
+
+		err := rows.Scan(&readTodo.ID, &readTodo.Task, &readTodo.Status)
+		if err != nil {
+			log.Fatalf("Error scanning todo: %v", err)
+			return nil, err
+		}
+
+		todosList = append(todosList, readTodo)
 	}
 
-	return todos
+	return todosList, nil
+
 }
 
+// keeping around for other programs using it still
 func (t *Todo) SaveToExistingFile(fileName string) error {
 	existingTodos, err := ReadFromFile(fileName)
 	if err != nil {

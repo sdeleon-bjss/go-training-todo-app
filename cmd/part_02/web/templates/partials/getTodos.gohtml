@@ -7,27 +7,15 @@
         <button type="button" id="clear-todo">Clear todo</button>
     </form>
 
+    <!-- another sample using htmx -->
     <h2>Get All todos</h2>
     <pre class="get-todos"></pre>
-    <form action="/api/todos" method="get" id="get-todos">
-        <button type="submit">Get All</button>
-        <button type="button" id="clear-todos">Clear todos</button>
-    </form>
+    <button hx-get="/api/todos" hx-target=".get-todos">Get All todos</button>
 
     <script>
         function showClearBtn(id) {
             document.getElementById(id).style.display = "block";
         }
-        document.getElementById("get-todos").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const response = await fetch("/api/todos");
-            const data = await response.json();
-
-            document.querySelector(".get-todos").textContent = JSON.stringify(data, null, 2);
-            if (data.length > 0) {
-                showClearBtn("clear-todos");
-            }
-        });
 
         // get 1 by id
         document.getElementById("get-todo").addEventListener("submit", async (e) => {
@@ -42,7 +30,7 @@
             const data = await response.json();
 
             document.querySelector(".get-todo").textContent = JSON.stringify(data, null, 2);
-            if (data.length > 0){
+            if (data.length > 0) {
                 showClearBtn("clear-todo");
             }
         });
@@ -50,10 +38,6 @@
         // clear
         document.getElementById("clear-todo").addEventListener("click", () => {
             document.querySelector(".get-todo").textContent = "";
-        });
-
-        document.getElementById("clear-todos").addEventListener("click", () => {
-            document.querySelector(".get-todos").textContent = "";
         });
     </script>
 {{ end }}

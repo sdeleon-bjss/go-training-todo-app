@@ -9,7 +9,7 @@ import (
 // TODO - figure out how to keep program open after running a command and not exiting
 
 func main() {
-	todos := todo.InitializeTodos()
+	todos := todo.InitializeTodos() // after implementation for Todo App (stretch goals) this will error
 
 	// flags
 	operation := flag.String("operation", "", "Choose an operation: list, create, read, update or delete")
@@ -33,7 +33,11 @@ func main() {
 			println("Task is required")
 			return
 		}
-		created := todos.Create(*createTask)
+		created, err := todos.Create(*createTask)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 		fmt.Println("Todo successfully created:", created)
 	case "read":
 		if *taskId <= 0 {

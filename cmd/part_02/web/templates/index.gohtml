@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ .Title }}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
 </head>
 <body>
     <h1>{{ .Message }}</h1>
@@ -14,12 +16,13 @@
         {{ end }}
     </ul>
 
+    <!-- sample using htmx -->
     <h2>Create</h2>
-    <pre id="created-todo"></pre>
-    <form action="/api/todos" method="post" id="create-todo">
+    <form hx-post="/api/todos" hx-trigger="submit" hx-target="#created-todo" hx-swap="innerHTML" id="create-todo">
         <input type="text" name="task" placeholder="enter a new task todo" />
         <button type="submit">Create</button>
     </form>
+    <pre id="created-todo"></pre>
 
     <h2>Delete</h2>
     <p id="deleted-todo"></p>

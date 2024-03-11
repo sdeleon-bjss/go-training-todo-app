@@ -1,11 +1,15 @@
 package main
 
 import (
+	"bjss-todo-app/cmd/part_02/web/database"
 	"bjss-todo-app/cmd/part_02/web/handlers"
 	"net/http"
 )
 
 func main() {
+	database.DB = database.Connect()
+	defer database.DB.Close()
+
 	handlers.SetupRoutes()
 
 	println("Server running on port 8000")

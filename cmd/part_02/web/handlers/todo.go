@@ -56,9 +56,9 @@ func getTodoByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTodos(w http.ResponseWriter, r *http.Request) {
-	results := todos.GetAll()
+	results, err := todos.GetAll()
 
-	err := json.NewEncoder(w).Encode(results)
+	err = json.NewEncoder(w).Encode(results)
 	if err != nil {
 		return
 	}
@@ -73,12 +73,13 @@ func createTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTodo = todos.Create(newTodo.Task)
-
-	err = newTodo.SaveToExistingFile("dummy_todos.json")
+	newTodo, err = todos.Create(newTodo.Task)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println("Todo created: ", newTodo)
 
 	err = json.NewEncoder(w).Encode(newTodo)
 	if err != nil {
