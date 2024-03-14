@@ -1,9 +1,9 @@
 package todo
 
 import (
-	"bjss-todo-app/cmd/part_02/web/database"
 	"encoding/json"
 	"fmt"
+	"github.com/sdeleon-bjss/cmd/part_02/web/database"
 	"log"
 	"math/rand"
 	"os"
@@ -231,7 +231,7 @@ func (t *Todos) GetAll() ([]Todo, error) {
 	for rows.Next() {
 		var readTodo Todo
 
-		err := rows.Scan(&readTodo.ID, &readTodo.Task, &readTodo.Status)
+		err = rows.Scan(&readTodo.ID, &readTodo.Task, &readTodo.Status)
 		if err != nil {
 			log.Fatalf("Error scanning todo: %v", err)
 			return nil, err
@@ -244,7 +244,7 @@ func (t *Todos) GetAll() ([]Todo, error) {
 
 }
 
-// receivers for in-memory operations
+// receivers for in-memory operations (meant for cli)
 
 func (t *Todos) CreateInMemory(task string) (Todo, error) {
 	if task == "" {

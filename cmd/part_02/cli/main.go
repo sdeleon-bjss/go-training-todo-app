@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bjss-todo-app/pkg/todo"
 	"flag"
 	"fmt"
+	"github.com/sdeleon-bjss/pkg/todo"
 )
 
 // TODO - figure out how to keep program open after running a command and not exiting
@@ -90,3 +90,9 @@ func main() {
 		println("Operation not found, please choose one of the following: list, create, read, update or delete")
 	}
 }
+
+// Notes:
+// when flags can be accessed using either the -flag space separated or -flag=value
+// -operation list or -operation=list
+//
+// have not figured out how to keep program alive

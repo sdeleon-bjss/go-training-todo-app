@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"bjss-todo-app/pkg/todo"
+	"github.com/sdeleon-bjss/pkg/todo"
 	"html/template"
 	"net/http"
+	"os"
 )
 
 var todos = todo.Todos{}
@@ -23,33 +24,37 @@ type pageData struct {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	// if using air:
+	// if using air (cd to cmd/part_02/web and run air in terminal) then use these paths
 	//pathToTemplates := "templates/*.gohtml"
 	//pathToPartials := "templates/partials/*.gohtml"
-	//
-	//if _, err := os.Stat(pathToTemplates); os.IsNotExist(err) {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-	//
-	//if _, err := os.Stat(pathToPartials); os.IsNotExist(err) {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-	//
-	//tmpl, err := template.ParseGlob(pathToTemplates)
-	//if err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-	//
-	//tmpl, err = tmpl.ParseGlob(pathToPartials)
-	//if err != nil {
-	//	http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
 
-	tmpl, err := template.ParseFiles("cmd/part_02/web/templates/index.gohtml", "cmd/part_02/web/templates/partials/getTodos.gohtml")
+	// if running from project root
+	pathToTemplates := "cmd/part_02/web/templates/*.gohtml"
+	pathToPartials := "cmd/part_02/web/templates/partials/*.gohtml"
+
+	if _, err := os.Stat(pathToTemplates); os.IsNotExist(err) {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if _, err := os.Stat(pathToPartials); os.IsNotExist(err) {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err := template.ParseGlob(pathToTemplates)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tmpl, err = tmpl.ParseGlob(pathToPartials)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//tmpl, err := template.ParseFiles("cmd/part_02/web/templates/index.gohtml", "cmd/part_02/web/templates/partials/getTodos.gohtml")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -72,3 +77,10 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// Notes:
+// net/http allows you to attach data when executing a template
+// - you can access this in the template files using {{.Title}} or {{.Message}}
+// template.ParseGlob() is used to parse multiple templates at once
+// if using air, you have to run program from cmd/part_02/web and not at root
+// - this pkg is nice for hot reloading, saves lots of time in dx

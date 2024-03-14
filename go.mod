@@ -1,4 +1,4 @@
-module bjss-todo-app
+module github.com/sdeleon-bjss
 
 go 1.22
 

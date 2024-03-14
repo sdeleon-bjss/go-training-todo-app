@@ -1,5 +1,7 @@
 # BJSS Go Academy - Todo App
 
+
+
 ### Resources
 - [Go Academy](https://bjss.learnamp.com/en/learnlists/golang-academy)
 - [Go Assigment: Todo App](https://bjss.learnamp.com/en/learnlists/golang-academy/items/sign-in-to-your-account-1be8a0da-f02e-416b-a8b1-2583c16905b3)
@@ -51,3 +53,28 @@ The stretch goals integrate a traditional database and focus on concurrent user 
 21. Extend web API to receive web page actions [Remote Commands] that are applied to To Do list which is stored to a database table. [Concurrency] [Goroutines] [Channels] [Mutexes][Interfaces][Http][Databases]
 22. Extend the Web API to receives actions [Remote Commands] to be applied to the To Do application list from multiple users. All actions to be applied to the database tables for each user. [Concurrency][Goroutines][Channels] [Mutexes][Interfaces][Databases]
 
+
+## How to run the application
+### Part 1
+- Run the following command to run the application
+```shell
+./cmd/part_01/main.exe
+# or
+go run ./cmd/part_01/main.go
+```
+
+### Part 2 (CLI)
+- From root directory
+```shell
+./cmd/part_02/cli/main.exe -operation list
+./cmd/part_02/cli/main.exe -help # this will print out commands
+
+# ./cmd/part_02/cli/main.exe -operation create -new-task <value>
+# ./cmd/part_02/cli/main.exe -operation read -id <id-value>
+# ./cmd/part_02/cli/main.exe -operation update -id <id-value> -task <value> -status <value>
+# ./cmd/part_02/cli/main.exe -operation delete -id <id-value>
+```
+
+### Part 2 (Web app/api)
+- (db and docker are local so this won't work for others..)
+- Preview

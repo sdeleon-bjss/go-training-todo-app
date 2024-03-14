@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bjss-todo-app/cmd/part_02/web/database"
-	"bjss-todo-app/cmd/part_02/web/handlers"
+	"github.com/sdeleon-bjss/cmd/part_02/web/database"
+	"github.com/sdeleon-bjss/cmd/part_02/web/handlers"
 	"net/http"
 )
 

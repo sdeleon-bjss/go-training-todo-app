@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bjss-todo-app/pkg/todo"
 	"fmt"
+	"github.com/sdeleon-bjss/pkg/todo"
 	"sync"
 	"time"
 )

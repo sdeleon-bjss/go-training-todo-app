@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"bjss-todo-app/pkg/todo"
 	"encoding/json"
 	"fmt"
+	"github.com/sdeleon-bjss/pkg/todo"
 	"net/http"
 	"strconv"
 )
