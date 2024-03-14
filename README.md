@@ -77,5 +77,5 @@ go run ./cmd/part_01/main.go
 
 ### Part 2 (Web app/api)
 - (db and docker are local so this won't work for others..)
-- Demo preview
+- Demo preview is at root of project
 
