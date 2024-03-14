@@ -7,6 +7,7 @@ import (
 )
 
 // TODO - figure out how to keep program open after running a command and not exiting
+// TODO - abstract logic in switch statements to funcs
 
 func main() {
 	todos := todo.InitializeTodos()
