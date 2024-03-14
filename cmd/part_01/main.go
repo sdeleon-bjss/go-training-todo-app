@@ -2,6 +2,9 @@ package main
 
 import (
 	"bjss-todo-app/pkg/todo"
+	"fmt"
+	"sync"
+	"time"
 )
 
 func main() {
@@ -38,111 +41,109 @@ func main() {
 	println("--- simulating concurrency --- ")
 
 	// p1 - 14
-	//sharedData := 0
-	//
-	//done := make(chan bool)
-	//num := make(chan int, 20)
-	//
-	//go func() {
-	//	for i := range 10 {
-	//		if i%2 == 0 {
-	//			sharedData = i
-	//			fmt.Printf("Go routine 1: %d\n", sharedData)
-	//		}
-	//
-	//		time.Sleep(100 * time.Millisecond)
-	//	}
-	//
-	//	done <- true
-	//	num <- sharedData
-	//}()
-	//
-	//go func() {
-	//	for i := range 10 {
-	//		if i%2 != 0 {
-	//			sharedData = i
-	//			fmt.Printf("Go routine 2: %d\n", sharedData)
-	//		}
-	//
-	//		time.Sleep(80 * time.Millisecond)
-	//	}
-	//
-	//	done <- true
-	//	num <- sharedData
-	//}()
-	//
-	//<-done
-	//<-done
-	//close(num)
+	sharedData := 0
+
+	done := make(chan bool)
+	num := make(chan int, 20)
+
+	go func() {
+		for i := range 10 {
+			if i%2 == 0 {
+				sharedData = i
+				fmt.Printf("Go routine 1: %d\n", sharedData)
+			}
+
+			time.Sleep(100 * time.Millisecond)
+		}
+
+		done <- true
+		num <- sharedData
+	}()
+
+	go func() {
+		for i := range 10 {
+			if i%2 != 0 {
+				sharedData = i
+				fmt.Printf("Go routine 2: %d\n", sharedData)
+			}
+
+			time.Sleep(80 * time.Millisecond)
+		}
+
+		done <- true
+		num <- sharedData
+	}()
+
+	<-done
+	<-done
+	close(num)
 
 	// p1 - 15
-	//sharedData := 0
-	//
-	//var mu sync.Mutex
-	//var wg sync.WaitGroup
-	//
-	//wg.Add(2)
-	//
-	//go func() {
-	//	defer wg.Done()
-	//
-	//	for i := range 10 {
-	//		if i%2 == 0 {
-	//			mu.Lock()
-	//			sharedData = i
-	//			mu.Unlock()
-	//			fmt.Println("Go routine 1: ", sharedData)
-	//		}
-	//
-	//		time.Sleep(1 * time.Millisecond)
-	//	}
-	//}()
-	//
-	//go func() {
-	//	defer wg.Done()
-	//
-	//	for i := range 10 {
-	//		if i%2 != 0 {
-	//			mu.Lock()
-	//			sharedData = i
-	//			mu.Unlock()
-	//			fmt.Println("Go routine 2: ", sharedData)
-	//		}
-	//
-	//		time.Sleep(1 * time.Millisecond)
-	//	}
-	//}()
-	//
-	//wg.Wait()
-	//fmt.Println("Final value:", sharedData)
+	sharedData = 0
+
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+
+		for i := range 10 {
+			if i%2 == 0 {
+				mu.Lock()
+				sharedData = i
+				mu.Unlock()
+				fmt.Println("Go routine 1: ", sharedData)
+			}
+
+			time.Sleep(1 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		for i := range 10 {
+			if i%2 != 0 {
+				mu.Lock()
+				sharedData = i
+				mu.Unlock()
+				fmt.Println("Go routine 2: ", sharedData)
+			}
+
+			time.Sleep(1 * time.Millisecond)
+		}
+	}()
+
+	wg.Wait()
+	fmt.Println("Final value:", sharedData)
 
 	// p1 - 16
-	//var mu sync.Mutex
-	//var wg sync.WaitGroup
-	//
-	//wg.Add(2)
-	//
-	//go func() {
-	//	defer wg.Done()
-	//
-	//	for _, t := range todos {
-	//		mu.Lock()
-	//		fmt.Printf("To Do Item:(%d) %s\n", t.ID, t.Task)
-	//		mu.Unlock()
-	//		time.Sleep(100 * time.Millisecond)
-	//	}
-	//}()
-	//
-	//go func() {
-	//	defer wg.Done()
-	//
-	//	for _, t := range todos {
-	//		mu.Lock()
-	//		fmt.Printf("To DO Status:(%d) %s\n", t.ID, t.Status)
-	//		mu.Unlock()
-	//		time.Sleep(100 * time.Millisecond)
-	//	}
-	//}()
-	//
-	//wg.Wait()
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+
+		for _, t := range todos {
+			mu.Lock()
+			fmt.Printf("To Do Item:(%d) %s\n", t.ID, t.Task)
+			mu.Unlock()
+			time.Sleep(100 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		for _, t := range todos {
+			mu.Lock()
+			fmt.Printf("To DO Status:(%d) %s\n", t.ID, t.Status)
+			mu.Unlock()
+			time.Sleep(100 * time.Millisecond)
+		}
+	}()
+
+	wg.Wait()
 }

@@ -9,7 +9,7 @@ import (
 // TODO - figure out how to keep program open after running a command and not exiting
 
 func main() {
-	todos := todo.InitializeTodos() // after implementation for Todo App (stretch goals) this will error
+	todos := todo.InitializeTodos()
 
 	// flags
 	operation := flag.String("operation", "", "Choose an operation: list, create, read, update or delete")
@@ -27,13 +27,13 @@ func main() {
 			flag.PrintDefaults()
 		}
 	case "list":
-		todos.List()
+		todos.ListInMemory()
 	case "create":
 		if *createTask == "" {
 			println("Task is required")
 			return
 		}
-		created, err := todos.Create(*createTask)
+		created, err := todos.CreateInMemory(*createTask)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -45,7 +45,7 @@ func main() {
 			return
 		}
 
-		foundTodo, err := todos.Read(*taskId)
+		foundTodo, err := todos.ReadInMemory(*taskId)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -64,11 +64,12 @@ func main() {
 			println("the `id` flag is required for updating")
 		}
 
-		updatedTodo, err := todos.Update(todo.Todo{
-			ID:     *taskId,
-			Task:   *updateTask,
-			Status: *updateStatus,
-		})
+		updatedTodo, err := todos.UpdateInMemory(
+			todo.Todo{
+				ID:     *taskId,
+				Task:   *updateTask,
+				Status: *updateStatus,
+			})
 		if err != nil {
 			return
 		}
@@ -79,7 +80,7 @@ func main() {
 			return
 		}
 
-		err := todos.Delete(*taskId)
+		err := todos.DeleteInMemory(*taskId)
 		if err != nil {
 			fmt.Println(err)
 		}
